@@ -113,7 +113,7 @@ Specialized in Go, TypeScript, Vue 3, and Kafka systems.
 ## ⚙️ Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/nvim-config.git ~/.config/nvim
+git clone https://github.com/devflex-pro/nvim-config.git ~/.config/nvim
 nvim
 ````
 
