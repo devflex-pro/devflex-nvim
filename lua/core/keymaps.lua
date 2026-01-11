@@ -26,8 +26,6 @@ local keymaps = {
     --diagnostic list
     ["<leader>dl"] = { "<cmd>lua vim.diagnostic.setloclist({open=true})<CR>", "Open diagnostics in location list" },
     -- Bufferline / буферы
-    ["<leader>bh"] = { "<cmd>BufferLineCyclePrev<CR>", "Previous buffer" },
-    ["<leader>bl"] = { "<cmd>BufferLineCycleNext<CR>", "Next buffer" },
     ["<Tab>"]      = { "<cmd>BufferLineCycleNext<CR>", "Next buffer" },
     ["<S-Tab>"]    = { "<cmd>BufferLineCyclePrev<CR>", "Previous buffer" },
     -- close buffers
@@ -37,9 +35,13 @@ local keymaps = {
     ["<leader>bo"] = {
       function()
         local current = vim.api.nvim_get_current_buf()
+
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          if buf ~= current and vim.api.nvim_buf_is_loaded(buf) then
-            vim.api.nvim_buf_delete(buf, { force = true })
+          if buf ~= current
+              and vim.api.nvim_buf_is_loaded(buf)
+              and vim.bo[buf].buflisted
+          then
+            pcall(vim.cmd, "bdelete " .. buf)
           end
         end
       end,
@@ -48,10 +50,12 @@ local keymaps = {
     ["<leader>sv"] = { "<cmd>vsplit<CR>", "Vertical split" },
     ["<leader>sh"] = { "<cmd>split<CR>", "Horizontal split" },
     ["<leader>sc"] = { "<cmd>close<CR>", "Close split" },
+
     ["<C-Up>"]     = { "<cmd>resize -2<CR>", "Resize split up" },
     ["<C-Down>"]   = { "<cmd>resize +2<CR>", "Resize split down" },
     ["<C-Left>"]   = { "<cmd>vertical resize -2<CR>", "Resize split left" },
     ["<C-Right>"]  = { "<cmd>vertical resize +2<CR>", "Resize split right" },
+
     ["<leader>se"] = { "<cmd>wincmd =<CR>", "Equalize splits" },
     ["<C-h>"]      = { "<C-w>h", "Window left" },
     ["<C-l>"]      = { "<C-w>l", "Window right" },
