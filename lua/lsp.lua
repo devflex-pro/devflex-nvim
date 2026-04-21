@@ -1,8 +1,5 @@
-local lspconfig = require("lspconfig")
-local util = require("lspconfig.util")
-
-local vue_language_server_path = vim.fn.stdpath("data") ..
-    "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+local vue_language_server_path = vim.fn.stdpath("data")
+    .. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
 
 local vue_plugin = {
   name = "@vue/typescript-plugin",
@@ -16,13 +13,6 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 capabilities.general = capabilities.general or {}
 capabilities.general.positionEncodings = { "utf-16" }
 
-local function is_vue_project(root_dir)
-  return util.path.exists(util.path.join(root_dir, "vite.config.ts"))
-      and (#vim.fn.glob(util.path.join(root_dir, "src/**/*.vue"), false, true) > 0)
-      or util.path.exists(util.path.join(root_dir, "nuxt.config.ts"))
-      or util.path.exists(util.path.join(root_dir, "nuxt.config.js"))
-end
-
 local function on_attach(client, bufnr)
   local map = function(mode, lhs, rhs, desc)
     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, silent = true, desc = desc })
@@ -32,6 +22,7 @@ local function on_attach(client, bufnr)
   map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
   map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
   map("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
+
   map("n", "<leader>fmi", function()
     vim.lsp.buf.code_action({
       apply = true,
@@ -47,14 +38,14 @@ local function on_attach(client, bufnr)
   end
 end
 
-lspconfig.rubocop.setup({
+vim.lsp.config("rubocop", {
   cmd = { "bundle", "exec", "rubocop", "--lsp" },
   filetypes = { "ruby" },
   capabilities = capabilities,
   on_attach = on_attach,
 })
 
-lspconfig.ruby_lsp.setup({
+vim.lsp.config("ruby_lsp", {
   cmd = { "bundle", "exec", "ruby-lsp" },
   filetypes = { "ruby", "eruby" },
   init_options = { formatter = "syntax_tree" },
@@ -62,7 +53,7 @@ lspconfig.ruby_lsp.setup({
   on_attach = on_attach,
 })
 
-lspconfig.vtsls.setup({
+vim.lsp.config("vtsls", {
   cmd = { "vtsls", "--stdio" },
   filetypes = {
     "javascript",
@@ -115,23 +106,12 @@ lspconfig.vtsls.setup({
       updateImportsOnFileMove = { enabled = "always" },
     },
   },
-  root_dir = function(fname)
-    local root = util.root_pattern("tsconfig.json", "jsconfig.json", "package.json", ".git")(fname)
-    if not root then
-      return nil
-    end
-
-    if is_vue_project(root) then
-      return root
-    end
-
-    return root
-  end,
+  root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
   capabilities = capabilities,
   on_attach = on_attach,
 })
 
-lspconfig.eslint.setup({
+vim.lsp.config("eslint", {
   capabilities = capabilities,
   on_attach = function(client, bufnr)
     on_attach(client, bufnr)
@@ -155,7 +135,7 @@ lspconfig.eslint.setup({
   },
 })
 
-lspconfig.tailwindcss.setup({
+vim.lsp.config("tailwindcss", {
   capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
@@ -167,18 +147,18 @@ lspconfig.tailwindcss.setup({
     "typescript",
     "typescriptreact",
   },
-  root_dir = util.root_pattern(
+  root_markers = {
     "tailwind.config.js",
     "tailwind.config.cjs",
     "tailwind.config.ts",
     "postcss.config.js",
     "postcss.config.cjs",
     "package.json",
-    ".git"
-  ),
+    ".git",
+  },
 })
 
-lspconfig.emmet_language_server.setup({
+vim.lsp.config("emmet_language_server", {
   capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
@@ -192,3 +172,10 @@ lspconfig.emmet_language_server.setup({
     "typescriptreact",
   },
 })
+
+vim.lsp.enable("rubocop")
+vim.lsp.enable("ruby_lsp")
+vim.lsp.enable("vtsls")
+vim.lsp.enable("eslint")
+vim.lsp.enable("tailwindcss")
+vim.lsp.enable("emmet_language_server")
