@@ -18,9 +18,7 @@ M.setup = function()
     },
   })
 
-  vim.cmd("colorscheme dayfox")
-  vim.cmd([[highlight Normal guibg=#f5efe0]])
-  vim.cmd([[highlight NormalFloat guibg=#f5efe0]])
+  vim.cmd("colorscheme nightfox")
   -- Bufferline стили под dawnfox
 end
 

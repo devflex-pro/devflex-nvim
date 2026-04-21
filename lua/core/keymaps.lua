@@ -23,6 +23,9 @@ local keymaps = {
     ["gd"]         = { vim.lsp.buf.definition, "Go to definition" },
     ["gr"]         = { vim.lsp.buf.references, "References" },
     ["K"]          = { vim.lsp.buf.hover, "Hover doc" },
+    ["<leader>ca"] = { vim.lsp.buf.code_action, "Code action" },
+    ["<leader>rn"] = { vim.lsp.buf.rename, "Rename symbol" },
+    ["gi"]         = { vim.lsp.buf.implementation, "Go to implementation" },
     --diagnostic list
     ["<leader>dl"] = { "<cmd>lua vim.diagnostic.setloclist({open=true})<CR>", "Open diagnostics in location list" },
     -- Bufferline / буферы
